@@ -1,0 +1,50 @@
+# ============================================================
+#  Git 属性 —— 本项目对换行符与编码极其敏感，请勿随意修改
+# ============================================================
+#
+#  背景（踩过的坑）：
+#   1. 含中文的 .ps1 必须存为 UTF-8 with BOM，否则 PowerShell 5.1
+#      会按系统 ANSI(GBK) 解码，导致中文乱码甚至静默失败。
+#   2. .bat 必须保持 CRLF 且为纯 ASCII，否则 cmd.exe 在 GBK
+#      代码页下解析会错乱（表现为双击闪退）。
+#   3. Windows 默认 autocrlf=true 会把 .ps1 转成 LF 提交，别的
+#      人拉下来再 checkout 时换行符变化，配合 BOM 容易出问题。
+#
+#  因此：以下类型强制 CRLF 且不做换行符转换。
+
+* text=auto
+
+# ---- Windows 脚本：强制 CRLF，禁止自动转换 ----
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+*.psm1  text eol=crlf
+*.psd1  text eol=crlf
+*.vbs   text eol=crlf
+
+# ---- 其余文本：统一 LF，避免跨平台 diff 噪音 ----
+*.md        text eol=lf
+*.txt       text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.gitignore text eol=lf
+
+# ---- 二进制：不做任何转换 ----
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.zip   binary
+*.exe   binary
+*.dll   binary
+
+# ---- 语言统计：文档不计入代码量 ----
+*.md   linguist-documentation
+*.png  linguist-documentation
+
+# ---- 导出归档时排除开发用文件 ----
+tests/    export-ignore
+tools/    export-ignore
+test.bat  export-ignore

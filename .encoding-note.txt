@@ -1,0 +1,27 @@
+# ============================================================
+#  .editorconfig 已于本目录提供；本文件说明仓库的文件编码约定
+# ============================================================
+#
+#  ★ 重要：本项目对文件编码有硬性要求
+#
+#  1) src/*.ps1、tests/*.ps1、tools/*.ps1
+#     -> UTF-8 with BOM + CRLF
+#     原因：含中文，PowerShell 5.1 无 BOM 时按 GBK 解码 -> 乱码/静默失败
+#
+#  2) *.bat / *.cmd
+#     -> 纯 ASCII + CRLF（绝对不能含中文）
+#     原因：cmd.exe 在 GBK 代码页下解析非 ASCII 字节会错乱
+#
+#  3) *.vbs
+#     -> 纯 ASCII + CRLF
+#
+#  4) *.md / *.txt
+#     -> UTF-8 无 BOM + LF
+#
+#  改完 .ps1 后修正 BOM 的方法（PowerShell）：
+#    $f = 'src\App.ps1'
+#    $t = [IO.File]::ReadAllText($f, [Text.UTF8Encoding]::new($false))
+#    [IO.File]::WriteAllText($f, $t, [Text.UTF8Encoding]::new($true))
+#
+#  校验：
+#    powershell -File tests\smoke.ps1

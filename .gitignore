@@ -1,0 +1,23 @@
+# 运行时缓存 / 敏感信息 —— 绝对不要提交
+# 注意：.wrangler/ 内含 Cloudflare 账号 ID 与邮箱
+.wrangler/
+
+# 临时文件
+*.log
+.tmp/
+
+# 仅保留 README 引用的界面截图 preview.png，其余截图不入库
+capture-*.png
+
+# 操作系统 / 编辑器
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 本地测试产物
+/dist/
+/out/
+/scratch/

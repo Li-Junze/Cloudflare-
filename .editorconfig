@@ -1,0 +1,52 @@
+# ============================================================
+#  EditorConfig —— 统一编辑器行为
+#  https://editorconfig.org
+# ============================================================
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# ---- PowerShell：4 空格缩进，CRLF（含 BOM，由编辑器/BOM 工具保证）----
+[*.ps1]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+
+[*.psm1]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+
+# ---- 批处理：CRLF ----
+[*.bat]
+end_of_line = crlf
+indent_style = tab
+
+[*.cmd]
+end_of_line = crlf
+indent_style = tab
+
+[*.vbs]
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+
+# ---- 文档 / 配置：LF ----
+[*.md]
+trim_trailing_whitespace = false
+end_of_line = lf
+
+[*.{json,yml,yaml,txt}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+[*.png]
+insert_final_newline = false
