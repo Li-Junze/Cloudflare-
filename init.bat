@@ -134,18 +134,31 @@ rem ---------- 4. wrangler ----------
 echo.
 echo [4/6] Checking wrangler CLI...
 set "WR_OK=0"
+set "WRV="
 where wrangler >nul 2>&1
 if not errorlevel 1 (
+    rem  A shim on PATH is not enough: a previously failed npm install can
+    rem  leave wrangler.cmd without the actual module. Only trust it when
+    rem  it can print a version.
     for /f "delims=" %%v in ('wrangler --version 2^>nul') do set "WRV=%%v"
+)
+if not "!WRV!"=="" (
     echo   [OK] wrangler !WRV!
     set "WR_OK=1"
+) else (
+    if not errorlevel 1 echo   [WARN] wrangler found on PATH but broken - no version output. Will reinstall.
 )
 
 rem ---- 4b. offline bundle: install wrangler from local files, no internet ----
 if "!WR_OK!"=="0" (
     if exist "%ROOT%wrangler-offline\wrangler.cmd" (
-        echo   [..] wrangler is missing. Installing bundled OFFLINE copy...
-        echo        This copies local files only, no internet download.
+        echo   [..] Installing bundled OFFLINE copy, no internet download...
+        echo   [..] Cleaning any broken previous install first...
+        if exist "%APPDATA%\npm\node_modules\wrangler" rmdir /s /q "%APPDATA%\npm\node_modules\wrangler"
+        if exist "%APPDATA%\npm\wrangler.cmd" del /q "%APPDATA%\npm\wrangler.cmd"
+        if exist "%APPDATA%\npm\wrangler.ps1" del /q "%APPDATA%\npm\wrangler.ps1"
+        if exist "%APPDATA%\npm\wrangler" del /q "%APPDATA%\npm\wrangler"
+        if exist "%APPDATA%\npm\cf-wrangler.cmd" del /q "%APPDATA%\npm\cf-wrangler.cmd"
         if not exist "%APPDATA%\npm" mkdir "%APPDATA%\npm"
         xcopy "%ROOT%wrangler-offline" "%APPDATA%\npm\" /E /I /Q /Y >nul
         set "PATH=%APPDATA%\npm;%PATH%"
@@ -162,7 +175,7 @@ if "!WR_OK!"=="0" (
 )
 
 if "!WR_OK!"=="0" (
-    echo   [..] wrangler is missing. Installing via npm (China mirror registry)...
+    echo   [..] wrangler is missing. Installing via npm, China mirror registry...
     echo.
     set "INSTALL_CMD=npm install -g wrangler --registry=https://registry.npmmirror.com"
     call !INSTALL_CMD!
