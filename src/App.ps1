@@ -24,7 +24,7 @@ function Start-CfDeployer {
     # 控件引用（脚本作用域，供内部函数使用）
     $names = @('TxtDir','TxtDirHint','TxtName','TxtNameHint','TxtUrl','TxtLog','PBar',
                'BtnDeploy','BtnBrowse','BtnLogin','BtnManage','BtnOpen','BtnClear',
-               'DotState','TxtState')
+               'DotState','TxtState','TxtLinkText','BtnOpenUrl','BtnCopy')
     $script:Ui = @{}
     foreach ($n in $names) { $script:Ui[$n] = $win.FindName($n) }
     $script:LastUrl = $null
@@ -58,6 +58,16 @@ function Start-CfDeployer {
         $script:Ui['TxtUrl'].Text = if ($n) { "→ https://$n.pages.dev" } else { '' }
     }
 
+    # 部署成功后，把线上地址显示到常驻的「线上地址」栏
+    function Show-DeployedUrl([string]$Url) {
+        $script:LastUrl = $Url
+        $tb = $script:Ui['TxtLinkText']
+        $tb.Text = $Url
+        $tb.Foreground = (New-Object Windows.Media.BrushConverter).ConvertFromString('#2563EB')
+        $tb.ToolTip = '点击全选，或用右侧按钮复制 / 打开'
+        foreach ($k in @('BtnCopy','BtnOpenUrl')) { $script:Ui[$k].IsEnabled = $true }
+    }
+
     function Update-DirHint {
         $d = $script:Ui['TxtDir'].Text.Trim().Trim('"')
         $hint = $script:Ui['TxtDirHint']
@@ -88,6 +98,25 @@ function Start-CfDeployer {
     # ---------------- 事件 ----------------
     $script:Ui['BtnClear'].Add_Click({ $script:Ui['TxtLog'].Clear() })
     $script:Ui['TxtName'].Add_TextChanged({ Update-UrlPreview })
+
+    # 「线上地址」栏：复制 / 打开 / 点击全选
+    $script:Ui['BtnCopy'].Add_Click({
+        if (-not $script:LastUrl) { return }
+        Set-Clipboard -Value $script:LastUrl
+        $script:Ui['BtnCopy'].Content = '已复制 ✓'
+        Write-Log '链接已复制到剪贴板，可直接粘贴分享。' 'ok'
+        $script:CopyTimer = New-Object Windows.Threading.DispatcherTimer
+        $script:CopyTimer.Interval = [TimeSpan]::FromSeconds(1.6)
+        $script:CopyTimer.Add_Tick({
+            $script:Ui['BtnCopy'].Content = '复制链接'
+            $script:CopyTimer.Stop()
+        })
+        $script:CopyTimer.Start()
+    })
+    $script:Ui['BtnOpenUrl'].Add_Click({
+        if ($script:LastUrl) { Start-Process $script:LastUrl }
+    })
+    $script:Ui['TxtLinkText'].Add_GotFocus({ $script:Ui['TxtLinkText'].SelectAll() })
 
     $script:Ui['TxtDir'].Add_TextChanged({
         $d = $script:Ui['TxtDir'].Text.Trim().Trim('"')
@@ -202,13 +231,10 @@ function Start-CfDeployer {
                 -OnLine { param($l, $k) Write-Log $l $k } -OnLog { param($l, $k) Write-Log $l $k }
 
             if ($code -eq 0) {
-                $script:LastUrl = "https://$name.pages.dev"
+                Show-DeployedUrl "https://$name.pages.dev"
                 Write-Log '部署成功！线上地址（首次生效可能有几十秒缓存）：' 'ok'
                 Write-Log $script:LastUrl 'ok'
-                $r = [System.Windows.MessageBox]::Show(
-                    "部署成功！`n`n$($script:LastUrl)`n`n现在打开浏览器看看？",
-                    '完成', 'YesNo', 'Information')
-                if ($r -eq 'Yes') { Start-Process $script:LastUrl }
+                Write-Log '地址已显示在上方「线上地址」栏，可一键复制或打开。' 'ok'
             } else {
                 Write-Log '部署失败，请查看上方日志。' 'err'
             }

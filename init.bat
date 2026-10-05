@@ -141,6 +141,26 @@ if not errorlevel 1 (
     set "WR_OK=1"
 )
 
+rem ---- 4b. offline bundle: install wrangler from local files, no internet ----
+if "!WR_OK!"=="0" (
+    if exist "%ROOT%wrangler-offline\wrangler.cmd" (
+        echo   [..] wrangler is missing. Installing bundled OFFLINE copy...
+        echo        This copies local files only, no internet download.
+        if not exist "%APPDATA%\npm" mkdir "%APPDATA%\npm"
+        xcopy "%ROOT%wrangler-offline" "%APPDATA%\npm\" /E /I /Q /Y >nul
+        set "PATH=%APPDATA%\npm;%PATH%"
+        if exist "%APPDATA%\npm\wrangler.cmd" (
+            for /f "delims=" %%v in ('"%APPDATA%\npm\wrangler.cmd" --version 2^>nul') do set "WRV=%%v"
+        )
+        if not "!WRV!"=="" (
+            echo   [OK] wrangler !WRV! installed from offline bundle.
+            set "WR_OK=1"
+        ) else (
+            echo   [WARN] offline install failed, falling back to npm...
+        )
+    )
+)
+
 if "!WR_OK!"=="0" (
     echo   [..] wrangler is missing. Installing via npm...
     echo.

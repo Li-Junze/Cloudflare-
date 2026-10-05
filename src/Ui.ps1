@@ -85,6 +85,7 @@ function Get-MainWindowXaml {
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
@@ -140,7 +141,34 @@ function Get-MainWindowXaml {
       </Grid>
     </Border>
 
-    <Border Grid.Row="2" Background="$($C.LogBg)" CornerRadius="12" Margin="24,0,24,12">
+    <Border Grid.Row="2" Background="White" CornerRadius="12" Margin="24,0,24,12" Padding="18,13">
+      <Border.Effect>
+        <DropShadowEffect BlurRadius="14" ShadowDepth="1" Opacity="0.06" Color="#000000"/>
+      </Border.Effect>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0" Background="#FFF4E8" CornerRadius="7" Padding="10,5"
+                VerticalAlignment="Center" Margin="0,0,14,0">
+          <TextBlock Text="线上地址" FontSize="11.5" FontWeight="SemiBold" Foreground="$($C.Accent)"/>
+        </Border>
+        <TextBox Grid.Column="1" x:Name="TxtLinkText"
+                 Text="部署成功后，线上地址会显示在这里，可直接复制分享"
+                 IsReadOnly="True" Background="Transparent" BorderThickness="0" Padding="0"
+                 Foreground="$($C.Sub)" FontSize="13.5" VerticalAlignment="Center"
+                 Cursor="Hand" Margin="0,0,12,0"/>
+        <Button Grid.Column="2" x:Name="BtnOpenUrl" Content="打开网页" Style="{StaticResource BtnGhost}"
+                Padding="12,7" Margin="0,0,8,0" IsEnabled="False"/>
+        <Button Grid.Column="3" x:Name="BtnCopy" Content="复制链接" Style="{StaticResource BtnGhost}"
+                Padding="12,7" IsEnabled="False"/>
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="3" Background="$($C.LogBg)" CornerRadius="12" Margin="24,0,24,12">
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
@@ -160,7 +188,7 @@ function Get-MainWindowXaml {
       </Grid>
     </Border>
 
-    <Border Grid.Row="3" Background="White" BorderBrush="$($C.Line)" BorderThickness="0,1,0,0" Padding="24,14">
+    <Border Grid.Row="4" Background="White" BorderBrush="$($C.Line)" BorderThickness="0,1,0,0" Padding="24,14">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
