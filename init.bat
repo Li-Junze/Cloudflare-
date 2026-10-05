@@ -162,10 +162,9 @@ if "!WR_OK!"=="0" (
 )
 
 if "!WR_OK!"=="0" (
-    echo   [..] wrangler is missing. Installing via npm...
+    echo   [..] wrangler is missing. Installing via npm (China mirror registry)...
     echo.
-    set "INSTALL_CMD=npm install -g wrangler"
-    if defined HTTP_PROXY set "INSTALL_CMD=npm install -g wrangler --registry=https://registry.npmmirror.com"
+    set "INSTALL_CMD=npm install -g wrangler --registry=https://registry.npmmirror.com"
     call !INSTALL_CMD!
     if errorlevel 1 (
         echo.
