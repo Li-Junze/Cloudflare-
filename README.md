@@ -1,6 +1,8 @@
 # Cloudflare Pages Deployer
 
-一个图形化工具，把本地网页文件夹一键发布到 Cloudflare Pages，拿到公网网址。不用记命令行。
+简化过后的控制面板，省去乱七八糟的配置，直接迅速部署，小白也能上手。
+
+把本地网页文件夹一键发布到 Cloudflare Pages，拿到公网网址。不用记命令行。
 
 ![界面预览](preview.png)
 
